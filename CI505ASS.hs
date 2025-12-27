@@ -112,10 +112,19 @@ function  bookList userList = do
 	else do putStrLn "Invalide Input!"
                 function bookList userList
         
+currentMaxBookID :: [Book] -> Int
+currentMaxBookID [] = 0
+currentMaxBookID ((bookID, _, _, _, _):xs) = 
+        let bkID = read bookID :: Int                   -- read is built-in haskell function that converts string into another type
+            remainBookMaxID = currentMaxBookID xs               -- find the current largest bookID recursively
+        in if bkID > remainBookMaxID
+                then bkID 
+                else remainBookMaxID
+
 
 addBook :: [Book] -> IO [Book]
 addBook book = do 
-        let genBookID = length book + 1         -- CI505 Introduction to Programming Lab PowerPoint Week 1 Page 7 
+        let nextBookID = show (currentMaxBookID book + 1)
 
         putStrLn "Enter Book Title"             -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 6
         addBook_Title <- getLine                -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 8
@@ -123,7 +132,7 @@ addBook book = do
         putStrLn "Enter Book Author"            -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 6
         addBook_Author <- getLine               -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 8
 
-        let newBook = book ++ [(show genBookID, addBook_Title, addBook_Author, "available", "")]    -- CI505 Introduction to Programming Lecture PowerPoint Week 1 Page 29
+        let newBook = book ++ [(nextBookID, addBook_Title, addBook_Author, "available", "")]    -- CI505 Introduction to Programming Lecture PowerPoint Week 1 Page 29
         -- W4P11 let store the result of a pure function
 
         putStrLn "book added"
@@ -154,9 +163,18 @@ removeBook book = do
 
                         return oldBook
 
+currentMaxUserID :: [User] -> Int
+currentMaxUserID [] = 0
+currentMaxUserID ((userID, _, _):xs) = 
+        let urID = read userID :: Int                   -- read is built-in haskell function that converts string into another type
+            remainUserMaxID = currentMaxUserID xs               -- find the current largest userID recursively
+        in if urID > remainUserMaxID
+                then urID 
+                else remainUserMaxID
+
 addUser :: [User] -> IO [User]
 addUser user = do 
-        let genUserID = length user + 1
+        let nextUserID = show (currentMaxUserID user + 1)
 
         putStrLn "Enter User Firstname"         -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 6
         addUser_FName <- getLine                -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 8
@@ -164,7 +182,7 @@ addUser user = do
         putStrLn "Enter User Lastname"          -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 6
         addUser_LName <- getLine                -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 8
 
-        let newUser = user ++ [(show genUserID, addUser_FName, addUser_LName)]    -- W4P11 let store the result of a pure function
+        let newUser = user ++ [(nextUserID, addUser_FName, addUser_LName)]    -- W4P11 let store the result of a pure function
 
         putStrLn "User added"           -- CI505 Introduction to Programming Lecture PowerPoint Week 4 Page 6
         return newUser
